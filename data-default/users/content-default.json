@@ -1,0 +1,19 @@
+{
+ "files": {},
+ "ignore": ".*",
+ "inner_path": "data/users/content.json",
+ "modified": 1457872263.220074,
+ "signs": {},
+ "user_contents": {
+  "cert_signers": {
+   "epix": [ "epix1xauthduuyn63k6kj54jzgp4l8nnjlhrsyaku8c" ]
+  },
+  "permission_rules": {
+   ".*": {
+    "files_allowed": "data.json",
+    "max_size": 512000
+   }
+  },
+  "permissions": {}
+ }
+}
