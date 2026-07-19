@@ -11,7 +11,13 @@
   "permission_rules": {
    ".*": {
     "files_allowed": "data.json",
-    "max_size": 512000
+    "max_size": 512000,
+    "merge_files": {
+     "pages.json": {
+      "class": "epix-orset-1",
+      "max_size": 3000000
+     }
+    }
    }
   },
   "permissions": {}

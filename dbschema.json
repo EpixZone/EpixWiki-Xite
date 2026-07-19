@@ -3,8 +3,13 @@
   "db_file": "data/epixwiki.db",
   "version": 2,
   "maps": {
+    "users/.+/pages.json": {
+      "to_table": [{"node": "post", "table": "pages"}],
+      "file_name": "data.json",
+      "fold_crdt": "post"
+    },
     "users/.+/data.json": {
-      "to_table": ["pages"]
+      "to_table": []
     },
     "users/.+/content.json": {
       "to_keyvalue": ["cert_user_id"]
