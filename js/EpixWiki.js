@@ -98,49 +98,98 @@ class EpixWiki extends EpixFrame {
       "required": false
     }, (data) => {
       if (data) {
-        data = JSON.parse(data);
-      } else {
-        data = { "pages": [] };
+        // Local copy is present: safe to edit and publish it as before.
+        this.pageWrite(inner_path, slug, JSON.parse(data), reload);
+        return;
       }
-      data.pages.unshift({
-        "id": uuid.v1(),
-        "body": document.getElementById("editor").value,
-        "date_added": new Date().getTime(),
-        "slug": slug
-      });
-      var new_data = { "pages": [] };
-      var pages_limit = {};
-      for (var i = 0, len = data.pages.length; i < len; i++) {
-        var page = data.pages[i];
-        if (pages_limit[page.slug] === undefined) {
-          pages_limit[page.slug] = 0;
+      // Local read MISSED. Do not fall back to a blank yet. On a device that
+      // has not synced this user's data.json, publishing a blank would sign an
+      // empty file over the network and wipe the user's real pages everywhere
+      // (last-writer-wins). Force a sync and re-read before deciding.
+      this.guardedPageSave(inner_path, slug, reload);
+    });
+    return false;
+  }
+
+  // Interim data-loss guard: only reached when the local data.json read missed.
+  // Force a site sync, re-read, and refuse to overwrite an unsynced file with a
+  // blank. A blank base is used only for a genuinely new account (no data.json
+  // and no content.json anywhere) creating its first page.
+  guardedPageSave(inner_path, slug, reload) {
+    this.cmd("wrapperNotification", ["info", "Syncing your latest data before saving, please wait..."]);
+    this.cmd("siteUpdate", {
+      "address": this.site_info.address
+    }, () => {
+      this.cmd("fileGet", {
+        "inner_path": inner_path,
+        "required": false
+      }, (synced) => {
+        if (synced) {
+          // The real data arrived from a peer: use it, never clobber.
+          this.pageWrite(inner_path, slug, JSON.parse(synced), reload);
+          return;
         }
-        if (pages_limit[page.slug] < 5) {
-          new_data.pages.push(page);
-          pages_limit[page.slug]++;
-        }
-      }
-      var json_raw = unescape(encodeURIComponent(JSON.stringify(new_data, undefined, '\t')));
-      this.cmd("fileWrite", [inner_path, btoa(json_raw)], (res) => {
-        if (res === "ok") {
-          if (reload === true) {
-            window.location = "?Page:" + slug;
+        // data.json is still missing after a forced sync. If this user already
+        // has an account on the network (content.json), their data.json simply
+        // has not landed yet, so abort instead of overwriting it with a blank.
+        var content_path = "data/users/" + this.site_info.auth_address + "/content.json";
+        this.cmd("fileGet", {
+          "inner_path": content_path,
+          "required": false
+        }, (content) => {
+          if (content) {
+            this.cmd("wrapperNotification", ["info", "Your data is still syncing, please try again in a moment."]);
             return;
           }
-          this.pageLoad();
-          this.updateUserQuota();
-          this.cmd("sitePublish", {
-            "inner_path": inner_path
-          }, (res) => {
-            if (res.error) {
-              this.cmd("wrapperNotification", ["error", res.error]);
-            }
-          });
-        } else {
-          this.cmd("wrapperNotification", ["error", "File write error: " + res]);
-        }
+          // No data.json and no content.json for this user anywhere: this is a
+          // genuinely new account creating its first page, so a blank base is safe.
+          this.pageWrite(inner_path, slug, { "pages": [] }, reload);
+        });
       });
-      return false;
+    });
+  }
+
+  pageWrite(inner_path, slug, data, reload) {
+    if (!data || !data.pages) {
+      data = { "pages": [] };
+    }
+    data.pages.unshift({
+      "id": uuid.v1(),
+      "body": document.getElementById("editor").value,
+      "date_added": new Date().getTime(),
+      "slug": slug
+    });
+    var new_data = { "pages": [] };
+    var pages_limit = {};
+    for (var i = 0, len = data.pages.length; i < len; i++) {
+      var page = data.pages[i];
+      if (pages_limit[page.slug] === undefined) {
+        pages_limit[page.slug] = 0;
+      }
+      if (pages_limit[page.slug] < 5) {
+        new_data.pages.push(page);
+        pages_limit[page.slug]++;
+      }
+    }
+    var json_raw = unescape(encodeURIComponent(JSON.stringify(new_data, undefined, '\t')));
+    this.cmd("fileWrite", [inner_path, btoa(json_raw)], (res) => {
+      if (res === "ok") {
+        if (reload === true) {
+          window.location = "?Page:" + slug;
+          return;
+        }
+        this.pageLoad();
+        this.updateUserQuota();
+        this.cmd("sitePublish", {
+          "inner_path": inner_path
+        }, (res) => {
+          if (res.error) {
+            this.cmd("wrapperNotification", ["error", res.error]);
+          }
+        });
+      } else {
+        this.cmd("wrapperNotification", ["error", "File write error: " + res]);
+      }
     });
   }
 
