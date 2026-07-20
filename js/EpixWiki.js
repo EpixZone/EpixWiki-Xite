@@ -15,6 +15,10 @@ class EpixWiki extends EpixFrame {
       this.site_info = site_info;
       WikiUi.loggedInMessage(site_info.cert_user_id);
       this.updateUserQuota();
+      // Move any legacy data.json pages into the signed-CRDT pages.json merge
+      // file, in the background. Additive and idempotent, so it is safe to run
+      // on every load.
+      this.migratePages();
     });
     if (!this.isStaticRequest()) {
       this.pageLoad();
@@ -83,8 +87,8 @@ class EpixWiki extends EpixFrame {
   }
 
   pageSave(reload = false) {
-    if (!Page.site_info.cert_user_id) {
-      Page.cmd("wrapperNotification", ["info", "Please, select your account."]);
+    if (!this.site_info.cert_user_id) {
+      this.cmd("wrapperNotification", ["info", "Please, select your account."]);
       return false;
     }
     var slug = this.getSlug();
@@ -92,55 +96,202 @@ class EpixWiki extends EpixFrame {
       this.cmd("wrapperNotification", ["error", "Operation not permitted."]);
       return false;
     }
-    var inner_path = "data/users/" + this.site_info.auth_address + "/data.json";
-    this.cmd("fileGet", {
-      "inner_path": inner_path,
-      "required": false
-    }, (data) => {
-      if (data) {
-        data = JSON.parse(data);
-      } else {
-        data = { "pages": [] };
+    var body = document.getElementById("editor").value;
+    // A page save is a signed CRDT record keyed by slug. The node union-merges
+    // it into pages.json (so it can never overwrite anyone else's pages) and
+    // republishes content.json. A merge write can never wipe pages, so the old
+    // data.json last-writer-wins sync/blank guard is gone.
+    this.savePage(slug, { body: body }, (res) => {
+      if (res !== "ok") {
+        return;
       }
-      data.pages.unshift({
-        "id": uuid.v1(),
-        "body": document.getElementById("editor").value,
-        "date_added": new Date().getTime(),
-        "slug": slug
+      if (reload === true) {
+        window.location = "?Page:" + slug;
+        return;
+      }
+      this.pageLoad();
+      this.updateUserQuota();
+    });
+    return false;
+  }
+
+  // Path to this user's pages merge file and their user content.json.
+  pagesPath() {
+    return "data/users/" + this.site_info.auth_address + "/pages.json";
+  }
+
+  contentPath() {
+    return "data/users/" + this.site_info.auth_address + "/content.json";
+  }
+
+  // A 128-bit random nonce (hex). Every record carries one - the node still
+  // requires nonce for record verification even when the post_id is derived
+  // from `key`.
+  randNonce() {
+    var a = new Uint8Array(16);
+    (window.crypto || window.msCrypto).getRandomValues(a);
+    return Array.from(a).map((b) => b.toString(16).padStart(2, "0")).join("");
+  }
+
+  // Read this user's pages.json (all signed record versions).
+  getRecords(cb) {
+    this.cmd("fileGet", { "inner_path": this.pagesPath(), "required": false }, (data) => {
+      var container = data ? JSON.parse(data) : null;
+      if (!container || !container.post) {
+        container = { "record_format": "epix-orset-1", "post": [] };
+      }
+      cb(container);
+    });
+  }
+
+  // Write ONE signed record to pages.json and publish. The node union-merges
+  // the record into the on-disk set (so this never overwrites other pages),
+  // then signs+bumps content.json (auto-declaring files_merged), which
+  // propagates the merge to peers.
+  saveRecord(record, cb) {
+    if (cb == null) cb = null;
+    var container = { "record_format": "epix-orset-1", "post": [record] };
+    var json_raw = unescape(encodeURIComponent(JSON.stringify(container, undefined, '\t')));
+    this.cmd("fileWrite", [this.pagesPath(), btoa(json_raw)], (res_write) => {
+      if (res_write !== "ok") {
+        this.cmd("wrapperNotification", ["error", "File write error: " + res_write]);
+        if (cb) cb(res_write);
+        return;
+      }
+      this.cmd("sitePublish", { "inner_path": this.contentPath() }, (res_pub) => {
+        if (res_pub && res_pub.error) {
+          this.cmd("wrapperNotification", ["error", res_pub.error]);
+        }
+        if (cb) cb(res_write);
       });
-      var new_data = { "pages": [] };
-      var pages_limit = {};
-      for (var i = 0, len = data.pages.length; i < len; i++) {
-        var page = data.pages[i];
-        if (pages_limit[page.slug] === undefined) {
-          pages_limit[page.slug] = 0;
-        }
-        if (pages_limit[page.slug] < 5) {
-          new_data.pages.push(page);
-          pages_limit[page.slug]++;
-        }
-      }
-      var json_raw = unescape(encodeURIComponent(JSON.stringify(new_data, undefined, '\t')));
-      this.cmd("fileWrite", [inner_path, btoa(json_raw)], (res) => {
-        if (res === "ok") {
-          if (reload === true) {
-            window.location = "?Page:" + slug;
-            return;
+    });
+  }
+
+  // Build + sign a new version of the page for `slug` (a create, an edit, or a
+  // delete tombstone) and save it. key=slug gives a stable per-(author,slug)
+  // post_id, so every version supersedes the prior one and one slug stays one
+  // page. clock/supersedes are derived from what is on disk so the merge orders
+  // this after every version this device has seen.
+  savePage(slug, changes, cb) {
+    if (cb == null) cb = null;
+    this.getRecords((container) => {
+      var maxClock = 0;
+      var orig = null;
+      container.post.forEach((r) => {
+        if (r.slug === slug || r.key === slug) {
+          if ((r.clock || 0) > maxClock) {
+            maxClock = r.clock;
           }
-          this.pageLoad();
-          this.updateUserQuota();
-          this.cmd("sitePublish", {
-            "inner_path": inner_path
-          }, (res) => {
-            if (res.error) {
-              this.cmd("wrapperNotification", ["error", res.error]);
-            }
-          });
-        } else {
-          this.cmd("wrapperNotification", ["error", "File write error: " + res]);
+          if (!orig || (r.clock || 0) >= (orig.clock || 0)) {
+            orig = r;
+          }
         }
       });
-      return false;
+      var deleted = changes.deleted === true;
+      var record = {
+        "key": slug,
+        "id": uuid.v1(),
+        "slug": slug,
+        "nonce": this.randNonce(),
+        "clock": Math.max(maxClock + 1, Date.now()),
+        "supersedes": maxClock,
+        "deleted": deleted,
+        "body": deleted ? "" : (changes.body != null ? changes.body : (orig ? orig.body : "")),
+        "date_added": Date.now()
+      };
+      this.cmd("recordSign", [record], (signed) => {
+        if (!signed || signed.error) {
+          if (signed && signed.error) {
+            this.cmd("wrapperNotification", ["error", "Sign error: " + signed.error]);
+          }
+          if (cb) cb(signed);
+          return;
+        }
+        this.saveRecord(signed, cb);
+      });
+    });
+  }
+
+  // One-time-ish migration of legacy data.json `pages[]` into pages.json.
+  // ADDITIVE and per-slug idempotent: signs only the newest legacy revision of
+  // each slug not already in pages.json (keeping its legacy uuid as the record
+  // `id` for revision-URL continuity), and NEVER strips data.json.pages[] (that
+  // last-writer-wins write could clobber pages not yet synced). Runs in the
+  // background on load and converges as data syncs.
+  migratePages(cb) {
+    if (cb == null) cb = null;
+    var done = () => { if (cb) cb(); };
+    if (!this.site_info || !this.site_info.cert_user_id || !this.site_info.auth_address) {
+      return done();
+    }
+    var data_path = "data/users/" + this.site_info.auth_address + "/data.json";
+    this.cmd("fileGet", { "inner_path": data_path, "required": false }, (data) => {
+      var parsed = data ? JSON.parse(data) : null;
+      var legacy = (parsed && parsed.pages) || [];
+      if (!legacy.length) {
+        return done();
+      }
+      this.getRecords((container) => {
+        var have = {};
+        container.post.forEach((r) => {
+          var s = (r.slug != null) ? r.slug : r.key;
+          if (s != null) {
+            have[s] = true;
+          }
+        });
+        // Legacy pages[] is newest-first; keep only the newest revision per
+        // slug, skipping slugs already migrated.
+        var seen = {};
+        var todo = [];
+        for (var i = 0, len = legacy.length; i < len; i++) {
+          var p = legacy[i];
+          if (!p || !p.slug || seen[p.slug]) {
+            continue;
+          }
+          seen[p.slug] = true;
+          if (have[p.slug]) {
+            continue;
+          }
+          todo.push(p);
+        }
+        if (!todo.length) {
+          return done();
+        }
+        var signed = [];
+        var idx = 0;
+        var signNext = () => {
+          if (idx >= todo.length) {
+            if (!signed.length) {
+              return done();
+            }
+            // One union-write + one publish for the whole batch.
+            var merged = { "record_format": "epix-orset-1", "post": signed };
+            var json_raw = unescape(encodeURIComponent(JSON.stringify(merged, undefined, '\t')));
+            return this.cmd("fileWrite", [this.pagesPath(), btoa(json_raw)], () => {
+              return this.cmd("sitePublish", { "inner_path": this.contentPath() }, () => done());
+            });
+          }
+          var pg = todo[idx++];
+          var record = {
+            "key": pg.slug,
+            "id": pg.id ? pg.id : uuid.v1(),
+            "slug": pg.slug,
+            "nonce": this.randNonce(),
+            "clock": 1,
+            "supersedes": 0,
+            "deleted": false,
+            "body": pg.body != null ? pg.body : "",
+            "date_added": pg.date_added != null ? pg.date_added : Date.now()
+          };
+          return this.cmd("recordSign", [record], (s) => {
+            if (s && !s.error) {
+              signed.push(s);
+            }
+            return signNext();
+          });
+        };
+        return signNext();
+      });
     });
   }
 
