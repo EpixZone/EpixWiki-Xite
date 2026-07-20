@@ -4,15 +4,15 @@
  "clone_root": "",
  "cloneable": true,
  "description": "Collaborative knowledge, fully decentralized",
- "epixnet_version": "0.0.2",
+ "epixnet_version": "0.3.17",
  "files": {
   "LICENSE": {
    "sha512": "e67014a69caa38c58575f333619243c9ebb3c98d462f0b4823ff5ed3d2cfdba3",
    "size": 1077
   },
   "README.md": {
-   "sha512": "e5a001c5e74fa82089a1cc18fcef9fa7a755e7b54700c083b91d56966e090e15",
-   "size": 33
+   "sha512": "02225cfe46ac5903536b286314d61763c219c85a34d7daab89dca4ee7dd385ba",
+   "size": 1446
   },
   "css/all.css": {
    "sha512": "76932056119b42a08406015ef1560e70c857e385abbe8c52759e28701f42c1f8",
@@ -39,24 +39,28 @@
    "size": 135
   },
   "data-default/users/content-default.json": {
-   "sha512": "ee880cdeb3f24b3a860e01fc9a392c3c977a25446991b18246587e10052a5883",
-   "size": 353
+   "sha512": "c513e1515382956ab2488024f65fc0eecaf0981dd8fc4e1043c15edecbaf089b",
+   "size": 466
   },
   "dbschema.json": {
-   "sha512": "95d5b1ab264bb48f3eed264fd51db9ffaf77cfc1b6caa31ee1a3dc550c247e94",
-   "size": 634
+   "sha512": "ed85a1333b897f85cdc94880d53799e13a8a1b470a4c86691270a1971dc1a2fe",
+   "size": 777
   },
   "fonts/roboto.woff": {
    "sha512": "97d995323996ec978ac96588af0f1e0987a1e6b77e5fb2c6fad89805c03aa5a3",
    "size": 13308
+  },
+  "img/epixwiki.png": {
+   "sha512": "59534ed5dc58152f4db7c451c9de37260df59d197e496afe37e733da76d0bdc9",
+   "size": 38595
   },
   "index.html": {
    "sha512": "8458126cd06816a8f868ed72ad537ac5cfd1cabac5862fc6785f039ec6469482",
    "size": 6171
   },
   "js/EpixWiki.js": {
-   "sha512": "b3b8e462a1d24f2371faf499a80015c6e70bca74b70c3b0307f20904aa4de910",
-   "size": 9506
+   "sha512": "b727a8c289e13d79a7ae17ff3df0942d3b2479efac727cfdf0e4b5291f4cc10e",
+   "size": 15381
   },
   "js/LinkHelper.js": {
    "sha512": "ad299354f25602f382c3ad4f506303f899d3b3c683829b4db4ccb168497c11da",
@@ -107,10 +111,10 @@
   }
  },
  "inner_path": "content.json",
- "modified": 1773633063,
+ "modified": 1784516632,
  "postmessage_nonce_security": true,
  "signers_sign": "G1qYg9bquqnK4AmF2TiLAz/UMJofxtqyVM0ZWz2lhOcIdYpOJ+rj8OB1Q0OIPrT9CqynIa2Ay5Wnm8mfMLohtL8=",
- "signs": {"epix1wkkpkx4ldeuh30e3wnz25ft70j9rj9ns77plwa": "Gw8uwymtGL1Kx7dM8RP2Dn3AweDnNvX0ok9X0fU4odtDX4dktsszvhFOpe+4rqGjXWuTrqf7+1TB9gR47dB77p4="},
+ "signs": {"epix1wkkpkx4ldeuh30e3wnz25ft70j9rj9ns77plwa": "G7vRQLJtIj2JZOfgva6KqpgbeDNBPkPxWQYUy+eJdrmfGxFHRfbOml8RzIzFjpKak4sO/ZSRvpwJpTnqyXhE9kw="},
  "signs_required": 1,
  "title": "Epix Wiki"
 }
