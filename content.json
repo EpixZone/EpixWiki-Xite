@@ -1,108 +1,188 @@
 {
  "address": "epix1wkkpkx4ldeuh30e3wnz25ft70j9rj9ns77plwa",
  "address_index": 48985914,
+ "bundles": {
+  "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4": {
+   "seq": 0,
+   "size": 185938
+  }
+ },
  "clone_root": "",
  "cloneable": true,
  "description": "Collaborative knowledge, fully decentralized",
- "epixnet_version": "0.3.17",
+ "edx": 1,
+ "epixnet_version": "0.3.28",
  "files": {
   "LICENSE": {
+   "b3": "e5d78c01bf8de96db29343a9f6771e6eaf18b2392057cea340d985e9e75fb264",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 0,
    "sha512": "e67014a69caa38c58575f333619243c9ebb3c98d462f0b4823ff5ed3d2cfdba3",
    "size": 1077
   },
   "README.md": {
+   "b3": "a9bb19a0fadd4ed11997f6aebfc4965adccbdfb6a2c1415ef8771678c82ace6c",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 1077,
    "sha512": "02225cfe46ac5903536b286314d61763c219c85a34d7daab89dca4ee7dd385ba",
    "size": 1446
   },
   "css/all.css": {
+   "b3": "92d4ad30a59e40a9aed82ffc604aa1b4efd45528eb52238440331180fa52da44",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 2523,
    "sha512": "76932056119b42a08406015ef1560e70c857e385abbe8c52759e28701f42c1f8",
    "size": 25400
   },
   "css/base.css": {
+   "b3": "dc212b42bf4f0cdfc331915eea181c604bbd0c22f1c418827e8d96e0bfa7f946",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 27923,
    "sha512": "1a7849699af7b262e17a286371dfc868f2714115f9a0171be58c71ec46afa202",
    "size": 8657
   },
   "css/buttons.css": {
+   "b3": "9dc484095845c8f18e17584d81f5ce0b53bcc7fad62acaa5e6a5096531f28be8",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 36580,
    "sha512": "509002ed7880e08849d104aa199cb88b42b0ffae37094859cbaa4fce21c0c5ff",
    "size": 2732
   },
   "css/grids.css": {
+   "b3": "af98b17fd3061afefe64f59583d8d9a6f9267acf19c81b9484f19e9854acc960",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 39312,
    "sha512": "81527d9ca5491c59fde9dc75739f751504b95dc75760a14cc30095658c55b9e4",
    "size": 5090
   },
   "css/master.css": {
+   "b3": "a5bfaaba5304406c704375ce1b7eae0aa0e93bf98988015fe452173f394cd30e",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 44402,
    "sha512": "e1c6c76255de8e5172651e65d7e147430c62a47f6df500be9ae62deb2ef1ecbe",
    "size": 3461
   },
   "data-default/data.json": {
+   "b3": "f7942b87f8d421e225a4bee46f5301bbdd187e6b3a0cc700c0c75378eb7e5096",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 47863,
    "sha512": "e5760cc4c71f5cb877f8a9dfc2c85d7bababf0983465053698bc5483b88252e3",
    "size": 135
   },
   "data-default/users/content-default.json": {
+   "b3": "fdc172a0502e7008f8f4e2e29916a611a367034059150b8c17978b07d9ab3ab2",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 47998,
    "sha512": "c513e1515382956ab2488024f65fc0eecaf0981dd8fc4e1043c15edecbaf089b",
    "size": 466
   },
   "dbschema.json": {
+   "b3": "2bf478c12275ceb832a2f3503ef2496db9e72cb144c65a70100610670e5ef4af",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 48464,
    "sha512": "ed85a1333b897f85cdc94880d53799e13a8a1b470a4c86691270a1971dc1a2fe",
    "size": 777
   },
   "fonts/roboto.woff": {
+   "b3": "be7214dc04f7b3f178b54d4dccc15a84620f660bec840c5f4dc507e44025fe33",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 49241,
    "sha512": "97d995323996ec978ac96588af0f1e0987a1e6b77e5fb2c6fad89805c03aa5a3",
    "size": 13308
   },
   "img/epixwiki.png": {
+   "b3": "01c9d8b84ba948d2ecd0b5f07621688caf79e18957268035b87df3ae59054599",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 62549,
    "sha512": "59534ed5dc58152f4db7c451c9de37260df59d197e496afe37e733da76d0bdc9",
    "size": 38595
   },
   "index.html": {
+   "b3": "253535fa48540ef71e8be1a6f085c4894aed9984ead518ca5c33f1a5c011801a",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 101144,
    "sha512": "8458126cd06816a8f868ed72ad537ac5cfd1cabac5862fc6785f039ec6469482",
    "size": 6171
   },
   "js/EpixWiki.js": {
+   "b3": "d27ddb103cd6f167f22fac0623b7197137eb7e828adee441bc67981b8d4cb649",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 107315,
    "sha512": "b727a8c289e13d79a7ae17ff3df0942d3b2479efac727cfdf0e4b5291f4cc10e",
    "size": 15381
   },
   "js/LinkHelper.js": {
+   "b3": "3401cd1265de41b52944e79b9ef30d04b8f9b76edd772b705785a7dd00943035",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 122696,
    "sha512": "ad299354f25602f382c3ad4f506303f899d3b3c683829b4db4ccb168497c11da",
    "size": 1919
   },
   "js/Time.js": {
+   "b3": "1fe0fd9d1dd4a63eddb2051ac584753d0b955aa86ca5dfdd37949c9e22f32c5f",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 124615,
    "sha512": "c5218456feb52af33c1bd0b3420ee1d09e250a10502d8f451f70ed615909896a",
    "size": 1377
   },
   "js/WikiUi.js": {
+   "b3": "4f7b37299ea03744f8bb036b189514f345f9716fae570beecf907802a92f4733",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 125992,
    "sha512": "95f830c995288557e4614742c6b178576b12bb8fe4d49a0843269fce2d214fce",
    "size": 4907
   },
   "js/lib/epixframe.js": {
+   "b3": "2c64ee3a252a62a15a98b2c31dfc3fbea3c9265d51f6c43801c1a1a926901278",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 130899,
    "sha512": "8cb66604615c662afc621127a3ab534d23323ad4bbfe068d9dae7a62fba73ae9",
    "size": 18957
   },
   "js/lib/marked.min.js": {
+   "b3": "173e9b7c22d0be5b8ebf4c9262113d05cb2fc8a6fb2d4bc414074d7285da04d9",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 149856,
    "sha512": "afca37e7d653218d2e5085d99380bcb0ee204851b19e84c9cb75214144a997d8",
    "size": 19535
   },
   "js/lib/slugger.js": {
+   "b3": "f596f5d8bf2934f1ac480a4b9cad6689987bcbcd8493d11cb7321b6282c733cd",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 169391,
    "sha512": "6f446f0449787111c07d6da237fb4ed1ba1548f29c39e6886f04f3a14951273f",
    "size": 1181
   },
   "js/lib/uuid.js": {
+   "b3": "73d82a5a13dec6dcd2bed54de65fa6457ff6734eda91d48c8b3a8a309d2822de",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 170572,
    "sha512": "e49098fba165108c3d8bf9ad72195602ffcbfb208fcce13aa20c7b1e35070bc6",
    "size": 8013
   },
   "js/utils/LinkHelper.coffee": {
+   "b3": "f55f4ca3f2511c617156d4835a5f8c3fb62d593499e19235a0ce65fd468e7df8",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 178585,
    "sha512": "984904f246a81b52406256ee137601350cd2cdbcf2670c9e031243ce8d7e3e5f",
    "size": 1783
   },
   "js/utils/Time.coffee": {
+   "b3": "be4f52cf62004f18ffe4ea21ab5d59e3a9d45630eebdce40e785da6d3b94f5d0",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 180368,
    "sha512": "73b5733c1bccf2ce5c8bec34bbd0b207ad42dd313bab926c3d10d3d9ee46a618",
    "size": 1045
   },
   "js/utils/WikiUi.coffee": {
+   "b3": "95bfe2c22682645cc3721f4e439e9b1478c4a3839ad288f4bed6d5d7fccdb7ba",
+   "bundle": "0351ce62d020c7f08e1884b2aa0edd3c9d0cc4be8638f7f0762a474401cf81a4",
+   "off": 181413,
    "sha512": "9fd48587fd4579a24fbcc328017dc3e48becb877dc7f3cfecff5bb532b4f6091",
    "size": 4525
   }
  },
+ "files_merkle_root": "c78e2811518f80b5cd0578e0100d67824de5436703c2f87643f823842f7782a9",
  "ignore": "(data/.*|js/all\\.js|\\.git)",
  "includes": {
   "data/users/content.json": {
@@ -111,10 +191,10 @@
   }
  },
  "inner_path": "content.json",
- "modified": 1784516632,
+ "modified": 1785266773,
  "postmessage_nonce_security": true,
  "signers_sign": "G1qYg9bquqnK4AmF2TiLAz/UMJofxtqyVM0ZWz2lhOcIdYpOJ+rj8OB1Q0OIPrT9CqynIa2Ay5Wnm8mfMLohtL8=",
- "signs": {"epix1wkkpkx4ldeuh30e3wnz25ft70j9rj9ns77plwa": "G7vRQLJtIj2JZOfgva6KqpgbeDNBPkPxWQYUy+eJdrmfGxFHRfbOml8RzIzFjpKak4sO/ZSRvpwJpTnqyXhE9kw="},
+ "signs": {"epix1wkkpkx4ldeuh30e3wnz25ft70j9rj9ns77plwa": "G3KLTqsFXQ/v2MqNwMeQD79o+PfFyM7aYiyrD3oA7VVzTciuhgL+hRjeDQm2v+WOL2g0uPrxBK8/B312X0eQkmE="},
  "signs_required": 1,
  "title": "Epix Wiki"
 }
