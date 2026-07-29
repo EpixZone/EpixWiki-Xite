@@ -10,6 +10,18 @@
  "clone_root": "",
  "cloneable": true,
  "description": "Collaborative knowledge, fully decentralized",
+ "distribution": {
+  "default": {
+   "retention": "complete",
+   "unit": "package"
+  },
+  "paths": {
+   "data/": {
+    "retention": "partial",
+    "unit": "feed"
+   }
+  }
+ },
  "edx": 1,
  "epixnet_version": "0.3.28",
  "files": {
@@ -192,9 +204,29 @@
  },
  "inner_path": "content.json",
  "modified": 1785266773,
+ "order_policy": {
+  "first_paint": [
+   "index.html",
+   "css/all.css",
+   "js/lib/epixframe.js",
+   "js/lib/marked.min.js",
+   "js/lib/slugger.js",
+   "js/lib/uuid.js",
+   "js/LinkHelper.js",
+   "js/Time.js",
+   "js/WikiUi.js",
+   "js/EpixWiki.js"
+  ],
+  "prefetch": [
+   "fonts/roboto.woff",
+   "img/epixwiki.png"
+  ]
+ },
  "postmessage_nonce_security": true,
  "signers_sign": "G1qYg9bquqnK4AmF2TiLAz/UMJofxtqyVM0ZWz2lhOcIdYpOJ+rj8OB1Q0OIPrT9CqynIa2Ay5Wnm8mfMLohtL8=",
- "signs": {"epix1wkkpkx4ldeuh30e3wnz25ft70j9rj9ns77plwa": "G3KLTqsFXQ/v2MqNwMeQD79o+PfFyM7aYiyrD3oA7VVzTciuhgL+hRjeDQm2v+WOL2g0uPrxBK8/B312X0eQkmE="},
+ "signs": {
+  "epix1wkkpkx4ldeuh30e3wnz25ft70j9rj9ns77plwa": "G3KLTqsFXQ/v2MqNwMeQD79o+PfFyM7aYiyrD3oA7VVzTciuhgL+hRjeDQm2v+WOL2g0uPrxBK8/B312X0eQkmE="
+ },
  "signs_required": 1,
  "title": "Epix Wiki"
 }
