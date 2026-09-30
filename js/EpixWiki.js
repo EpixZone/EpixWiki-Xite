@@ -99,10 +99,17 @@
       if (cmd === 'wrapperPopState') {
         this.navigate(params.state && params.state.url || params.href || '?Page:home', 'pop');
       } else if (cmd === 'setSiteInfo') {
+        const before = this.site_info;
         this.setSiteInfo(params);
         const event = Array.isArray(params.event) ? params.event[0] : '';
+        const eventPath = Array.isArray(params.event) ? String(params.event[1] || '') : '';
         if (!this.started) return;
-        if (event || params.tasks === 0 || params.bad_files === 0) {
+        // The node pushes siteInfo on every peer or connection change. Only a
+        // content event, or the end of a sync, can change what this page shows.
+        const contentEvent = event === 'updated' || event === 'cert_changed' || event === 'file_done' && /\.json$/i.test(eventPath);
+        const wasSyncing = Number(before.tasks) > 0 || Number(before.bad_files) > 0;
+        const syncFinished = wasSyncing && Number(params.tasks) === 0 && Number(params.bad_files) === 0;
+        if (contentEvent || syncFinished) {
           clearTimeout(this.updateTimer);
           this.updateTimer = setTimeout(() => {
             if (this.editing) this.checkForUpdate(); else this.refresh(true);
@@ -207,7 +214,16 @@
         else if (route.kind === 'recent') data = await this.store.recent();
         else data = await this.store.listPages(route.kind === 'search' ? route.query : '');
         if (generation !== this.requestGeneration || this.editing) return;
+        const syncing = Number(this.site_info.tasks) > 0 || Number(this.site_info.bad_files) > 0;
+        const renderKey = route.url + '\n' + this.fingerprint(data) + (data ? '' : '\n' + syncing);
+        if (background && renderKey === this.renderedKey) {
+          if (!data || Array.isArray(data) && !data.length) this.retryEmpty(generation);
+          return;
+        }
+        const known = route.kind === 'page' && data ? await this.knownLinks(data.body) : null;
+        if (generation !== this.requestGeneration || this.editing) return;
         this.routeReady = true;
+        this.renderedKey = renderKey;
         this.status(''); el('contents').hidden = true; el('update-notice').hidden = true;
         el('page-content').hidden = false; el('revision-notice').hidden = true;
         el('page-actions').hidden = true;
@@ -216,14 +232,14 @@
           const active = a.dataset.nav === route.kind || a.dataset.nav === 'home' && route.kind === 'page' && route.slug === 'home';
           a.classList.toggle('active', active); if (active) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
         });
-        if (route.kind === 'page') this.renderPage(data);
+        if (route.kind === 'page') this.renderPage(data, known);
         else if (route.kind === 'history') this.renderHistory(data);
         else if (route.kind === 'recent') this.renderRecent(data);
         else if (route.kind === 'new') { this.page = null; this.heading('New page', 'CONTRIBUTE'); this.startEdit(); }
         else this.renderList(data);
         document.title = el('page-title').textContent + ' | Epix Wiki';
         this.quiet('wrapperSetTitle', document.title);
-        this.quiet('wrapperInnerLoaded', {});
+        if (!this.innerLoadedSent) { this.innerLoadedSent = true; this.quiet('wrapperInnerLoaded', {}); }
         if (!background && route.fragment) {
           const anchor = document.getElementById('wiki-heading-' + route.fragment) || document.getElementById(route.fragment);
           if (anchor && el('page-content').contains(anchor)) { anchor.scrollIntoView(); anchor.focus({preventScroll: true}); }
@@ -247,15 +263,31 @@
     }
 
     heading(title, kind) { text('page-title', title); text('page-kind', kind); }
+
+    // Identity of what a view shows, so an unchanged background re-query does not touch the DOM.
+    fingerprint(data) {
+      const one = page => page ? [page.id, page.date_added, page.clock, page.deleted, page.sign || '', page.directory || ''] : null;
+      return JSON.stringify(Array.isArray(data) ? data.map(one) : one(data));
+    }
+
+    // Resolve which [[links]] exist before rendering, so links do not change colour after paint.
+    async knownLinks(body) {
+      const names = [], pattern = /\[\[([^\]\n|]+)(?:\|[^\]\n]*)?\]\]/g;
+      let match;
+      while ((match = pattern.exec(String(body || '')))) { const slug = WikiRouter.slug(match[1]); if (slug) names.push(slug); }
+      if (!names.length || !this.store.existingSlugs) return null;
+      try { return await this.store.existingSlugs(names.slice(0, 100)); }
+      catch (_) { return null; }
+    }
     date(value) {
       if (!value) return 'Unknown date';
       const date = new Date(value < 100000000000 ? value * 1000 : value);
       return Number.isNaN(date.getTime()) ? 'Unknown date' : date.toLocaleString(undefined, {dateStyle: 'medium', timeStyle: 'short'});
     }
     author(page) { return page.cert_user_id || page.author || 'Contributor'; }
-    renderMarkdown(body) { return WikiMarkdown.render(body); }
+    renderMarkdown(body, known) { return WikiMarkdown.render(body, known); }
 
-    renderPage(page) {
+    renderPage(page, known) {
       this.page = page;
       const route = this.route;
       this.heading(page ? page.title : WikiRouter.title(route.slug), route.slug === 'home' ? 'KNOWLEDGE, TOGETHER' : 'WIKI PAGE');
@@ -271,14 +303,14 @@
       }
       el('edit-page').disabled = false;
       text('page-meta', 'Updated ' + this.date(page.date_added) + ' · ' + this.author(page));
-      el('page-content').innerHTML = this.renderMarkdown(page.body);
+      el('page-content').innerHTML = this.renderMarkdown(page.body, known);
       if (route.revision) {
         el('revision-notice').hidden = false;
         el('current-version').href = WikiRouter.page(route.slug);
         text('edit-page', 'Edit from this revision');
       }
       this.renderContents();
-      this.markMissingLinks(this.requestGeneration);
+      if (!known) this.markMissingLinks(this.requestGeneration);
     }
 
     renderContents() {
@@ -404,7 +436,7 @@
         this.stopEdit(); this.route = WikiRouter.parse(WikiRouter.page(page.slug));
         this.writeHistory('push');
         // Render the successful signed record immediately, without an index race.
-        ++this.requestGeneration; this.routeReady = true; this.renderPage(page);
+        ++this.requestGeneration; this.routeReady = true; this.renderedKey = null; this.renderPage(page);
         document.title = page.title + ' | Epix Wiki'; this.quiet('wrapperSetTitle', document.title);
         this.status('Revision published.'); this.updateQuota();
       } catch (error) {
