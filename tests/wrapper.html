@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>Epix Wiki integration wrapper</title>
+<style>html,body,iframe {width:100%;height:100%;margin:0;border:0;display:block}</style>
+<iframe id="site" title="Epix Wiki"></iframe>
+<script>
+  const frame = document.getElementById('site');
+  const parameters = new URLSearchParams(location.search);
+  const testId = parameters.get('test');
+  const target = parameters.get('route') || '?Page:home';
+  const commands = window.commands = [];
+  let connected = false;
+  window.confirmations = [];
+  window.notifications = [];
+  window.sendEvent = (cmd, params) => frame.contentWindow.postMessage({cmd, params}, location.origin);
+  window.addEventListener('popstate', event => {
+    sendEvent('wrapperPopState', {href: location.href, state: event.state});
+  });
+  window.addEventListener('message', async event => {
+    if (event.source !== frame.contentWindow || event.origin !== location.origin) return;
+    const message = event.data;
+    if (!message || !message.cmd || message.cmd === 'response') return;
+    commands.push({cmd: message.cmd, params: message.params});
+    if (message.cmd === 'innerReady') {
+      if (!connected) {
+        connected = true;
+        setTimeout(() => sendEvent('wrapperOpenedWebsocket', {}), 0);
+      }
+      return;
+    }
+    let result;
+    try {
+      if (message.cmd === 'wrapperGetState') result = history.state;
+      else if (message.cmd === 'wrapperPushState' || message.cmd === 'wrapperReplaceState') {
+        const [state, title, url] = message.params;
+        const method = message.cmd === 'wrapperPushState' ? 'pushState' : 'replaceState';
+        history[method](state, title || '', url || location.href);
+        result = 'ok';
+      } else if (message.cmd === 'wrapperConfirm') {
+        result = confirmations.length ? confirmations.shift() : false;
+      } else if (message.cmd === 'wrapperNotification') {
+        notifications.push(message.params);
+        result = 'ok';
+      } else if (message.cmd.startsWith('wrapper')) result = 'ok';
+      else {
+        const response = await fetch('/__bridge/' + encodeURIComponent(testId), {
+          method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(message)
+        });
+        result = await response.json();
+      }
+    } catch (error) { result = {error: error.message}; }
+    if (['wrapperSetTitle', 'wrapperPushState', 'wrapperReplaceState', 'wrapperSetViewport', 'wrapperInnerLoaded'].includes(message.cmd)) return;
+    frame.contentWindow.postMessage({cmd: 'response', to: message.id, result}, location.origin);
+  });
+  history.replaceState({url: target}, '', location.href);
+  const innerUrl = new URL((parameters.get('media') ? '/media/test-site/' : '/') + 'index.html' + target, location.origin);
+  innerUrl.search += (innerUrl.search ? '&' : '?') + 'wrapper_nonce=regression';
+  frame.src = innerUrl.href;
+</script>
+</html>

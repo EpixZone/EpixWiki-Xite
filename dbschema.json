@@ -1,17 +1,15 @@
 {
   "db_name": "EpixWiki",
   "db_file": "data/epixwiki.db",
-  "version": 2,
+  "version": 4,
   "maps": {
-    "users/.+/pages.json": {
-      "to_table": [{"node": "post", "table": "pages"}],
-      "file_name": "data.json",
-      "fold_crdt": "post"
+    "users/.+/pages.json$": {
+      "to_table": [{"node": "post", "table": "pages"}]
     },
-    "users/.+/data.json": {
-      "to_table": []
+    "users/.+/data.json$": {
+      "to_table": [{"node": "pages", "table": "pages"}]
     },
-    "users/.+/content.json": {
+    "users/.+/content.json$": {
       "to_keyvalue": ["cert_user_id"]
     }
   },
@@ -19,16 +17,26 @@
     "pages": {
       "cols": [
         ["id", "TEXT"],
-        ["body", "TEXT"],
         ["slug", "TEXT"],
+        ["title", "TEXT"],
+        ["body", "TEXT"],
+        ["summary", "TEXT"],
         ["date_added", "INTEGER"],
+        ["clock", "INTEGER"],
+        ["supersedes", "INTEGER"],
+        ["post_id", "INTEGER"],
+        ["author", "TEXT"],
+        ["deleted", "INTEGER"],
+        ["sign", "TEXT"],
         ["json_id", "INTEGER REFERENCES json (json_id)"]
       ],
       "indexes": [
-        "CREATE UNIQUE INDEX page_key ON pages(json_id, date_added)",
-        "CREATE UNIQUE INDEX id ON pages(id)"
+        "CREATE INDEX wiki_page_slug ON pages(slug, date_added DESC)",
+        "CREATE INDEX wiki_page_revision ON pages(id)",
+        "CREATE INDEX wiki_page_file ON pages(json_id)",
+        "CREATE INDEX wiki_page_lineage ON pages(json_id, post_id, clock)"
       ],
-      "schema_changed": 1
+      "schema_changed": 1790791200
     }
   }
 }

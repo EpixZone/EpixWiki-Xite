@@ -3,3 +3,6 @@
 data/users/*/
 js/all.js
 js/lib/all.js
+node_modules/
+test-results/
+playwright-report/

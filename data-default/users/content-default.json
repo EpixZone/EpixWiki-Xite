@@ -6,7 +6,7 @@
  "signs": {},
  "user_contents": {
   "cert_signers": {
-   "epix": [ "epix1xauthduuyn63k6kj54jzgp4l8nnjlhrsyaku8c" ]
+   "xid.epix": ["chain"]
   },
   "permission_rules": {
    ".*": {
