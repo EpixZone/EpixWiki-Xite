@@ -20,6 +20,9 @@
         settings: Object.assign({}, previous.settings, info.settings),
         content: Object.assign({}, previous.content, info.content)
       });
+      const identityChanged = ["auth_address", "cert_user_id"].some(key =>
+        Object.prototype.hasOwnProperty.call(info, key) && info[key] !== previous[key]);
+      if (identityChanged && !Object.prototype.hasOwnProperty.call(info, "xid_directory")) delete this.siteInfo.xid_directory;
       return this.siteInfo;
     }
 

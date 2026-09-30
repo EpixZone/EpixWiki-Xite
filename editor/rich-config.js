@@ -5,7 +5,8 @@ CKEDITOR.disableAutoInline = true;
 CKEDITOR.config.customConfig = "";
 CKEDITOR.config.stylesSet = [];
 CKEDITOR.config.language = "en";
-CKEDITOR.config.title = "";
+// CKEditor copies its title into the inline editable's aria-label on activation.
+CKEDITOR.config.title = "Page content in rich text";
 CKEDITOR.config.allowedContent = true;
 CKEDITOR.config.versionCheck = false;
 CKEDITOR.document.appendStyleSheet = function(value) { return value; };

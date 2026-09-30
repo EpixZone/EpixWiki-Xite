@@ -101,6 +101,17 @@ test("minimal site events retain identity and permissions", () => {
   assert.deepEqual(f.store.siteInfo.settings.permissions, ["Test"]);
 });
 
+test("switching to an identity without a named directory cannot reuse the previous writer's path", async () => {
+  const f = fixture();
+  const next = {auth_address: "epix1bob", cert_user_id: "bob@xid.epix"};
+  f.setIdentity(next);
+  f.store.setSiteInfo(next);
+  assert.equal(f.store.siteInfo.xid_directory, undefined);
+  await f.store.save({slug: "guide", title: "Guide", body: "A new writer"}, f.store.siteInfo);
+  assert.equal(f.calls.find(call => call.command === "fileWrite").params[0], "data/users/epix1bob/pages.json");
+  assert.equal(f.store.siteInfo.xid_directory, undefined);
+});
+
 test("saving creates distinct signed revisions under xID directory and preserves Unicode", async () => {
   const f = fixture();
   const input = {slug: "home", title: "Welcome", body: "Hello 世界 🌎", summary: "Initial edit"};

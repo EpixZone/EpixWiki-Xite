@@ -65,6 +65,21 @@ const server = http.createServer((req, res) => {
   try {
     await page.goto(url);
     await page.waitForFunction(()=>editor.mde);
+    await page.evaluate(()=>editor.setMode('rich'));
+    const richTextbox=page.getByRole('textbox',{name:'Page content in rich text',exact:true});
+    assert.equal(await richTextbox.count(),1,'the initialized rich editor has an accessible name');
+    assert.equal(await richTextbox.isVisible(),true);
+    assert.equal(await richTextbox.getAttribute('aria-multiline'),'true');
+    for (const readOnly of [true,false]) {
+      await page.evaluate(readOnly=>editor.setReadOnly(readOnly),readOnly);
+      assert.equal(await richTextbox.count(),1,'read-only changes preserve the rich editor accessible name');
+      assert.equal(await richTextbox.getAttribute('aria-readonly'),String(readOnly));
+    }
+    await page.evaluate(async()=>{await editor.setMode('markdown');await editor.setMode('rich');});
+    assert.equal(await richTextbox.count(),1,'returning to rich text preserves the accessible name');
+    assert.equal(await richTextbox.isVisible(),true);
+    await page.evaluate(()=>editor.setMode('markdown'));
+    console.log('PASS rich text accessible name survives initialization, read-only changes and mode switches');
     const original='# Exact source\n\n1. first\n2. second\n\n[ref]: https://example.com\n\n[link][ref]\n\n[[Page name|Read this]]\n\n```js\nconst a = 1;\n```\n';
     await page.evaluate(async text=>{
       editor.setValue(text);
