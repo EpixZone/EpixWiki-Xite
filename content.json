@@ -6,9 +6,9 @@
    "seq": 0,
    "size": 265763
   },
-  "a879af98e7e10384750361fa5bc9502604cc81e3a0f0c54c192d97090642c509": {
+  "ff0b3f4c38a58bcdd99a32713809f7a194b626e156eb0f1c124a8a55ed0fd75c": {
    "seq": 1,
-   "size": 174360
+   "size": 174683
   }
  },
  "clone_root": "",
@@ -133,14 +133,14 @@
   },
   "editor/rich-config.js": {
    "b3": "017c39c7f0591ca52315c66375fa743da9888a7e33bcea29d6d8554d407ce90b",
-   "bundle": "a879af98e7e10384750361fa5bc9502604cc81e3a0f0c54c192d97090642c509",
+   "bundle": "ff0b3f4c38a58bcdd99a32713809f7a194b626e156eb0f1c124a8a55ed0fd75c",
    "off": 0,
    "sha512": "b03fd5c09c99606bade670253516d99b2e4708f92d7edf3f43d14e961b78264b",
    "size": 7170
   },
   "editor/to-markdown.js": {
    "b3": "7bb34e8a399b427219ce5dd34feabe1c01929900e10e2ac36dc9f731c6f3495d",
-   "bundle": "a879af98e7e10384750361fa5bc9502604cc81e3a0f0c54c192d97090642c509",
+   "bundle": "ff0b3f4c38a58bcdd99a32713809f7a194b626e156eb0f1c124a8a55ed0fd75c",
    "off": 7170,
    "sha512": "abd5f929d45294b8b710b0d789e96a96663a091fb132d5c1c7ac54261fdea076",
    "size": 19418
@@ -161,8 +161,8 @@
   },
   "img/favicon.png": {
    "b3": "56bac4a0de7106fd5b7d606f9a5b69839537131e15bb9c3c187782a77a617b2c",
-   "bundle": "a879af98e7e10384750361fa5bc9502604cc81e3a0f0c54c192d97090642c509",
-   "off": 170170,
+   "bundle": "ff0b3f4c38a58bcdd99a32713809f7a194b626e156eb0f1c124a8a55ed0fd75c",
+   "off": 170493,
    "sha512": "10c84350c10a60d29751ccae4ff571c959b3d2633d743915bb42314c93ba0f98",
    "size": 4190
   },
@@ -182,43 +182,43 @@
   },
   "js/WikiEditor.js": {
    "b3": "2135e7238be1362ae2641cb40cfac693b3ba4de4d9c639372afcb5386361b408",
-   "bundle": "a879af98e7e10384750361fa5bc9502604cc81e3a0f0c54c192d97090642c509",
+   "bundle": "ff0b3f4c38a58bcdd99a32713809f7a194b626e156eb0f1c124a8a55ed0fd75c",
    "off": 26588,
    "sha512": "0f328a01298df6d3776d7d03f838a57369622d9883bace210afecbcf1be6e9dd",
    "size": 28415
   },
   "js/WikiMarkdown.js": {
-   "b3": "f600b73f8c3a0a01a8dcfe68387f6de583a42871c46881dd3dc818731e514a95",
-   "bundle": "a879af98e7e10384750361fa5bc9502604cc81e3a0f0c54c192d97090642c509",
+   "b3": "1cb4a3e12d93dc067a89687405985dbbd4cfc212af01b6fcc60f434b1e8f3969",
+   "bundle": "ff0b3f4c38a58bcdd99a32713809f7a194b626e156eb0f1c124a8a55ed0fd75c",
    "off": 55003,
-   "sha512": "91c3bcf202ba13e7c4dec8cec457d8f42d5bdeb26ef493ad3fe487bd6b3c9414",
-   "size": 2494
+   "sha512": "39281d30b2a6a6c8e1a94f539e9153864473fba4d6e99688c94880147d914863",
+   "size": 2817
   },
   "js/WikiRouter.js": {
    "b3": "b91c74ca7c4069be2f24cae5fa4a46e4f6cdc434f75f3fc61c141c59416564a2",
-   "bundle": "a879af98e7e10384750361fa5bc9502604cc81e3a0f0c54c192d97090642c509",
-   "off": 57497,
+   "bundle": "ff0b3f4c38a58bcdd99a32713809f7a194b626e156eb0f1c124a8a55ed0fd75c",
+   "off": 57820,
    "sha512": "d25e18a24998c09197f5eb7386ff167cb1f6b4197f31ebfb913e0fdf7807a72e",
    "size": 1988
   },
   "js/WikiStore.js": {
    "b3": "0b16aaa65f32762c7b0830d976068894940a18f63498df9e0cc391476ecbd9d6",
-   "bundle": "a879af98e7e10384750361fa5bc9502604cc81e3a0f0c54c192d97090642c509",
-   "off": 59485,
+   "bundle": "ff0b3f4c38a58bcdd99a32713809f7a194b626e156eb0f1c124a8a55ed0fd75c",
+   "off": 59808,
    "sha512": "4ed41a9a88230c9fc7aaaaa86acb174c5e2026028875cdaeb89284a33f1b10c3",
    "size": 15021
   },
   "js/all.js": {
    "b3": "951dc5520474efdfda7408cb67e09270970eb67ed5d4ee7632c18f8cdb337935",
-   "bundle": "a879af98e7e10384750361fa5bc9502604cc81e3a0f0c54c192d97090642c509",
-   "off": 74506,
+   "bundle": "ff0b3f4c38a58bcdd99a32713809f7a194b626e156eb0f1c124a8a55ed0fd75c",
+   "off": 74829,
    "sha512": "5d88cdd543a0f85045e6053799bbe9642154024b59d1b4baf50ecd07884f64ae",
    "size": 55421
   },
   "js/lib/DOMPurify-LICENSE": {
    "b3": "83cb3a2fcf829b6138e095b083016c34ddcdfa07b68d38782722c14fcf85ace6",
-   "bundle": "a879af98e7e10384750361fa5bc9502604cc81e3a0f0c54c192d97090642c509",
-   "off": 129927,
+   "bundle": "ff0b3f4c38a58bcdd99a32713809f7a194b626e156eb0f1c124a8a55ed0fd75c",
+   "off": 130250,
    "sha512": "98f6b79b778f7b0a15415bd750c3a8a097d650511cb4ec8115188e115c47053f",
    "size": 11358
   },
@@ -238,8 +238,8 @@
   },
   "js/lib/purify.min.js": {
    "b3": "ad3c7965efd371779c8c099b86bf8293e0d12694f09d897c77abe15c4e3915dc",
-   "bundle": "a879af98e7e10384750361fa5bc9502604cc81e3a0f0c54c192d97090642c509",
-   "off": 141285,
+   "bundle": "ff0b3f4c38a58bcdd99a32713809f7a194b626e156eb0f1c124a8a55ed0fd75c",
+   "off": 141608,
    "sha512": "7e54268645cd450de251fbed742a1bb6932309bea413eccb9d3880ba50102775",
    "size": 28885
   },
@@ -265,7 +265,7 @@
    "size": 4525
   }
  },
- "files_merkle_root": "908e0b2f0ada3447230a41cdba4061329a10d186714009964b504328b318fc87",
+ "files_merkle_root": "910a76d19344ea7341d06dec227a7b66e8aba68cec9bf92ba49038048fc9e364",
  "ignore": "(data/.*|tests/.*|node_modules/.*|package(-lock)?\\.json|\\.github/.*|\\.git.*)",
  "includes": {
   "data/users/content.json": {
@@ -274,14 +274,14 @@
   }
  },
  "inner_path": "content.json",
- "modified": 1790804710,
+ "modified": 1790817631,
  "order_policy": {
   "first_paint": ["index.html","css/master.css","css/editor.css","js/lib/epixframe.js","js/lib/marked.min.js","js/lib/purify.min.js","js/WikiRouter.js","js/WikiMarkdown.js","js/WikiStore.js","js/WikiEditor.js","js/EpixWiki.js"],
   "prefetch": ["fonts/roboto.woff","img/favicon.png","img/epixwiki.png"]
  },
  "postmessage_nonce_security": true,
  "signers_sign": "G1qYg9bquqnK4AmF2TiLAz/UMJofxtqyVM0ZWz2lhOcIdYpOJ+rj8OB1Q0OIPrT9CqynIa2Ay5Wnm8mfMLohtL8=",
- "signs": {"epix1wkkpkx4ldeuh30e3wnz25ft70j9rj9ns77plwa": "HCoPYP0JUseiwGVU23wz4ccdectU5aAZUffrfFxMXddmV+PFlSiSnbZPSpkbM6AEwj8n68IekYBYdhPpRPM4Rl0="},
+ "signs": {"epix1wkkpkx4ldeuh30e3wnz25ft70j9rj9ns77plwa": "HHKN2EthAlz0E8XnaLUPuE6J3+C7LSjGdLn7q9wWMCh6Fhpq33gSDKyavDSh1KfP1ZiG/93+9eyo12Op0AxdHaM="},
  "signs_required": 1,
  "title": "Epix Wiki",
  "viewport": "width=device-width, initial-scale=1"
