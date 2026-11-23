@@ -483,7 +483,12 @@ test('reviewing an incoming change and canceling edits respect confirmation resu
   scenario.addRecord(record('incoming-home', 'home', 'Home', 'The incoming revision', 100));
   await event(page, {...scenario.info, event: ['file_done', 'data/users/alice/pages.json']});
   await frame.locator('#update-notice').waitFor({state: 'visible'});
+  // The frame asks for confirmation asynchronously after a click. Wait until
+  // the wrapper has answered each declined request before queuing the next
+  // answer, or a slow runner hands that answer to the earlier request.
+  const asked = count => page.waitForFunction(count => commands.filter(command => command.cmd === 'wrapperConfirm').length === count, count);
   await frame.locator('#load-update').click();
+  await asked(1);
   assert.equal(await editorValue(frame), 'Draft to keep');
   await page.evaluate(() => confirmations.push(true));
   await frame.locator('#load-update').click();
@@ -491,6 +496,7 @@ test('reviewing an incoming change and canceling edits respect confirmation resu
   await frame.locator('#edit-page').click();
   await editBody(page, frame, 'A second draft');
   await frame.locator('#cancel-edit').click();
+  await asked(3);
   assert.equal(await editorValue(frame), 'A second draft');
   await page.evaluate(() => confirmations.push(true));
   await frame.locator('#cancel-edit').click();
