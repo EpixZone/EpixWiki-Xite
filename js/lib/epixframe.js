@@ -17,8 +17,19 @@
    *   CoffeeScript: class MyApp extends EpixFrame
    *
    * @license MIT
-   * @version 1.1.0
+   * @version 1.1.1
    */
+
+  // `u` (a URL) with the xite's ajax_key appended to its query, before any
+  // fragment.
+  function withKey(u, key) {
+    var hash = u.hash;
+    var bare = u.href.slice(0, u.href.length - hash.length);
+    var sep = '?';
+    if (u.search) sep = '&';
+    else if (bare.charAt(bare.length - 1) === '?') sep = '';
+    return bare + sep + 'ajax_key=' + encodeURIComponent(key) + hash;
+  }
 
   class EpixFrame {
     constructor(url) {
@@ -356,7 +367,10 @@
       var message = 'xidResolveSite is not implemented by the EpixNet node: use siteInfo().canonical_domain ' +
         'for the current xite, or xidResolveName(name)';
       if (typeof console !== 'undefined' && console.warn) console.warn('[EpixFrame] ' + message, site);
-      return Promise.reject({ error: message });
+      // An Error, with the message also on `.error` like a node error reply.
+      var error = new Error(message);
+      error.error = message;
+      return Promise.reject(error);
     }
 
     // ---------------------------------------------------------------------------
@@ -482,7 +496,7 @@
      * Promise. Outside the wrapper (top-level window) nothing is patched.
      */
     monkeyPatchAjax() {
-      if (this._ajaxKeyPromise) return this._ajaxKeyPromise;
+      if (this._ajaxKeyPromise != null) return this._ajaxKeyPromise;
       var self = this;
 
       if (typeof window === 'undefined' || window.parent === window) {
@@ -517,13 +531,6 @@
         if (u.protocol !== loc.protocol || u.host !== loc.host) return null;
         if (u.searchParams.has('ajax_key')) return null;
         return u;
-      }
-
-      function withKey(u, key) {
-        var hash = u.hash;
-        var bare = u.href.slice(0, u.href.length - hash.length);
-        var sep = u.search ? '&' : (bare.charAt(bare.length - 1) === '?' ? '' : '?');
-        return bare + sep + 'ajax_key=' + encodeURIComponent(key) + hash;
       }
 
       if (typeof XMLHttpRequest !== 'undefined') {
@@ -563,18 +570,21 @@
         proto.send = function () {
           var deferred = this._epixDeferred;
           if (!deferred) return realSend.apply(this, arguments);
-          var xhr = this;
           var sendArgs = Array.prototype.slice.call(arguments);
-          keyReady.then(function (key) {
-            if (xhr._epixDeferred !== deferred) return; // aborted or reopened
-            xhr._epixDeferred = null;
+          // Arrow function: `this` stays the XHR being replayed.
+          keyReady.then((key) => {
+            if (this._epixDeferred !== deferred) return; // aborted or reopened
+            this._epixDeferred = null;
             var openArgs = deferred.open.slice();
             if (key != null) openArgs[1] = withKey(deferred.url, key);
-            realOpen.apply(xhr, openArgs);
-            for (var i = 0; i < deferred.headers.length; i++) {
-              realSetRequestHeader.apply(xhr, deferred.headers[i]);
+            realOpen.apply(this, openArgs);
+            for (var header of deferred.headers) {
+              realSetRequestHeader.apply(this, header);
             }
-            realSend.apply(xhr, sendArgs);
+            realSend.apply(this, sendArgs);
+          }).catch(function (err) {
+            // send() already returned, so the caller cannot see this throw.
+            self.log('Deferred XHR could not be sent:', err);
           });
         };
 
@@ -631,7 +641,7 @@
       // Scroll state: save on unload
       window.addEventListener('beforeunload', function () {
         self.history_state.scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
-        self._post('wrapperReplaceState', [self.history_state, null]);
+        void self._post('wrapperReplaceState', [self.history_state, null]);
       });
 
       // Scroll state: restore on connect
